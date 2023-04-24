@@ -24,6 +24,7 @@ def _process_dataset_to_data_frame(
     if not use_stars:
         dataset_df["label"] = dataset_df["stars"].apply(star_to_label)
         dataset_df.dropna(inplace=True)
+        dataset_df["label"] = dataset_df["label"].astype(int)
         dataset_df.drop("stars", axis=1, inplace=True)
 
     return dataset_df
@@ -33,6 +34,7 @@ def load_dataset(
     return_pandas: bool = True,
     languages: Optional[List[str]] = None,
     use_stars: bool = False,
+    n_sample: Optional[int] = None
 ) -> Union[pd.DataFrame, datasets.Dataset]:
     """
     Load the train split of Amazon Reviews dataset from HuggingFace's datasets library.
@@ -48,6 +50,8 @@ def load_dataset(
 
     if return_pandas:
         dataset_df = _process_dataset_to_data_frame(dataset, use_stars=use_stars)
+        if n_sample:
+            return dataset_df.sample(n_sample, random_state=42)
         return dataset_df
 
     return dataset
