@@ -8,7 +8,7 @@ from sklearn.naive_bayes import BernoulliNB
 from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 
-from src.review.models.components.stemmer import Stemmer
+from src.models.components.stemmer import Stemmer
 
 _classifiers = {
     "logreg": LogisticRegression,
@@ -33,7 +33,9 @@ def _parse_model_params_to_search(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 class MlClassifier:
-    def __init__(self, language: str = "english", classifier_name: str = "logreg"):
+    def __init__(
+        self, language: Optional[str] = "english", classifier_name: str = "logreg"
+    ):
         self.language = language
         self.classifier_name = classifier_name
         self.pipeline = self._define_pipeline()
@@ -70,6 +72,9 @@ class MlClassifier:
         self,
         classifier_params: Optional[Dict[str, Any]] = None,
     ) -> Pipeline:
+        cv_params = {}
+        if self.language:
+            cv_params["stop_words"] = self.language
         if classifier_params is None:
             classifier = _classifiers[self.classifier_name]()
         else:
@@ -77,7 +82,7 @@ class MlClassifier:
         return Pipeline(
             [
                 ("stemmer", Stemmer()),
-                ("cv", CountVectorizer(stop_words=self.language)),
+                ("cv", CountVectorizer(**cv_params)),
                 ("classifyer", classifier),
             ]
         )

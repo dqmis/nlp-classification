@@ -1,5 +1,4 @@
 from torch.utils.data import Dataset
-import numpy as np
 from typing import List, Any, Dict
 
 from transformers.tokenization_utils_base import BatchEncoding

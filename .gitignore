@@ -8,3 +8,4 @@ wandb
 output
 notebooks/amazon_reviews/aclImdb
 trained_model/
+*.html
